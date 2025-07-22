@@ -1,0 +1,18 @@
+# Mac OS hidden files
+.DS_Store
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# Visual studio
+.vscode
+
+# Dataset
+data/CUB100
+data/CUB_200_cut
+data/Imagenet
+data/Omniglot
+data/CIFAR100
+
+# Experimental Results
+results/
