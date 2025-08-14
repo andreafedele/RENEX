@@ -549,6 +549,21 @@ def LIME(query_set, support_set, feature_encoder, relation_network, segmentation
                 lime_local_exp_sorted = sorted(lime_local_exp, key=lambda x: x[1], reverse=True)
                 relevant_segments = [seg for seg, weight in lime_local_exp_sorted]
 
+                # create heatmap shaped [H, W]
+                heatmap = np.zeros(support_image_np.shape[:2], dtype=np.float32)
+
+                for seg_id, weight in lime_local_exp:
+                    mask = (lime_segments == seg_id)
+                    if mask.ndim == 3:
+                        mask = mask[:, :, 0]
+                    num_pixels = np.sum(mask)
+                    if num_pixels > 0:
+                        # per-pixel value -> sum over segment = weight (same pattern as RENEX)
+                        heatmap[mask] = weight / num_pixels
+
+                # store it so function returns same structure as RENEX
+                heatmaps[(query_idx, supp_idx)] = heatmap
+
                 insertion_auc_lime, insertion_scores_lime = compute_insertion_lime(query_idx, supp_idx,
                                               query_set, support_set,
                                               support_image_np, lime_segments, relevant_segments,
